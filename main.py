@@ -10,14 +10,33 @@ def main():
     for frame in frames:
         img = frame
 
-        
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        img = cv2.GaussianBlur(img, (9,15), 1.5)
-        showImg(img)
+        img = cv2.GaussianBlur(img, (9, 15), 1.5)
         img = cv2.Canny(img, 100, 200)
 
+        # MASK
+        mask_ROI = np.zeros([frame.shape[0], frame.shape[1], 1], dtype=np.uint8)
+        dots_ROI = np.array([(0, 700), (540, 460), (740, 460), (1280, 700)])
+        cv2.drawContours(mask_ROI, [dots_ROI], 0, 255, -1)
+        mask_ROI = cv2.bitwise_not(mask_ROI)
+        mask_LOGO = np.zeros([frame.shape[0], frame.shape[1], 1], dtype=np.uint8)
+        dots_LOGO = np.array(
+            [(1040, 660), (1260, 660), (1260, 715), (1040, 715)])
+        cv2.drawContours(mask_LOGO, [dots_LOGO], 0, 255, -1)
+        mask = cv2.bitwise_or(mask_ROI, mask_LOGO)
+        mask = cv2.bitwise_not(mask)
+
+        # APPLY MASK
+        img = cv2.bitwise_and(img, mask)
+
+        #
         showImg(img)
+        
+    
+        
+        
+
+        
 
 
 def showImg(img):
