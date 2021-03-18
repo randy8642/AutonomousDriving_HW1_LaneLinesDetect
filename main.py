@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # PARAM
 SRC_PATH = './data/video.mp4'
 OUT_PATH = './output.avi'
-NUM = 7200
+NUM = 240
 
 # get frame
 cap = cv2.VideoCapture(SRC_PATH)
@@ -68,12 +68,13 @@ for n in range(NUM):
             pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
 
             # y = ma + b
+           
             m = (pt2[1]-pt1[1])/(pt2[0]-pt1[0])
             b = pt1[1] - (pt1[0] * m)
             pt1_new = (int((720 - b) // m), 720)
             pt2_new = (int((460 - b) // m), 460)
 
-            if np.abs(m) < 0.2:
+            if m < 0.4 and m > -0.2:
                 continue
 
             if m < 0:
