@@ -15,11 +15,13 @@ def main():
         img = cv2.Canny(img, 100, 200)
 
         # MASK
-        mask_ROI = np.zeros([frame.shape[0], frame.shape[1], 1], dtype=np.uint8)
+        mask_ROI = np.zeros(
+            [frame.shape[0], frame.shape[1], 1], dtype=np.uint8)
         dots_ROI = np.array([(0, 700), (540, 460), (740, 460), (1280, 700)])
         cv2.drawContours(mask_ROI, [dots_ROI], 0, 255, -1)
         mask_ROI = cv2.bitwise_not(mask_ROI)
-        mask_LOGO = np.zeros([frame.shape[0], frame.shape[1], 1], dtype=np.uint8)
+        mask_LOGO = np.zeros(
+            [frame.shape[0], frame.shape[1], 1], dtype=np.uint8)
         dots_LOGO = np.array(
             [(1040, 660), (1260, 660), (1260, 715), (1040, 715)])
         cv2.drawContours(mask_LOGO, [dots_LOGO], 0, 255, -1)
@@ -31,11 +33,36 @@ def main():
 
         #
         showImg(img)
-        
-    
-        
-        
+        # Detect line
+        LeftLane = []
+        RightLane = []
 
+        
+        lines = cv2.HoughLines(img, 1, np.pi / 180, threshold=150)
+  
+        if lines is not None:
+            for i in range(0, len(lines)):
+                rho = lines[i][0][0]
+                theta = lines[i][0][1]
+                a = np.cos(theta)
+                b = np.sin(theta)
+                x0 = a * rho
+                y0 = b * rho
+                pt1 = (int(x0 + 1000*(-b)), int(y0 + 1000*(a)))
+                pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
+                
+                m = (pt2[1]-pt1[1])/(pt2[0]-pt1[0])
+                if m < 0 and len(LeftLane) < 1:
+                    LeftLane.extend([pt1, pt2])
+                elif m > 0 and len(RightLane) < 1:
+                    RightLane.extend([pt1, pt2])
+
+        # draw
+        cdst = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        cv2.line(cdst, LeftLane[0], LeftLane[1], (0, 0, 255), 3, cv2.LINE_AA)
+        cv2.line(cdst, RightLane[0], RightLane[1], (255, 0, 0), 3, cv2.LINE_AA)
+        plt.imshow(cdst)
+        plt.show()
         
 
 
