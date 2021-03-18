@@ -33,7 +33,7 @@ for n in range(NUM):
     
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img = cv2.GaussianBlur(img, (9, 9), 0.1)
+    # img = cv2.GaussianBlur(img, (9, 9), 0.1)
     img = cv2.Canny(img, 100, 200)
     
     # MASK
