@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # PARAM
 SRC_PATH = './data/video.mp4'
 OUT_PATH = './output.avi'
-NUM = 480
+NUM = 7200
 
 
 # get frame
@@ -24,7 +24,8 @@ for n in range(NUM):
 
     # Capture frame-by-frame
     ret, frame = cap.read()
-
+    if(n < 4100):
+        continue
     img = frame
 
     # --------------------------------------------------------------------------------------------- #
@@ -65,7 +66,7 @@ for n in range(NUM):
     # --------------------------------------------------------------------------------------------- #
     # MASK
     mask_ROI = np.zeros([height, width, 1], dtype=np.uint8)
-    dots_ROI = np.array([(0, 700), (450, 400), (830, 400), (1280, 700)])
+    dots_ROI = np.array([(100, 700), (450, 250), (830, 250), (1180, 700)])
     cv2.drawContours(mask_ROI, [dots_ROI], 0, 255, -1)
     mask_ROI = cv2.bitwise_not(mask_ROI)
     mask_LOGO = np.zeros([height, width, 1], dtype=np.uint8)
@@ -117,7 +118,7 @@ for n in range(NUM):
     # Choose the number of sliding windows
     nwindows = 9
     # Set the width of the windows +/- margin
-    margin = 100
+    margin = 50
     # Set minimum number of pixels found to recenter window
     minpix = 50
 
@@ -177,6 +178,7 @@ for n in range(NUM):
 
     # --------------------------------------------------------------------------------------------- #
     ### Fit a second order polynomial to each with np.polyfit() ###
+    print(left_lane_inds)
     left_fit = np.polyfit(lefty, leftx, 2)
     right_fit = np.polyfit(righty, rightx, 2)   
     
@@ -198,29 +200,37 @@ for n in range(NUM):
     out_img = np.dstack((binary_warped, binary_warped, binary_warped))*255
     window_img = np.zeros_like(out_img)
         
-    margin = 100
+    margin = 7
     # Generate a polygon to illustrate the search window area
     # And recast the x and y points into usable format for cv2.fillPoly()
     left_line_window1 = np.array([np.transpose(np.vstack([left_fitx-margin, ploty]))])
-    left_line_window2 = np.array([np.flipud(np.transpose(np.vstack([left_fitx+margin, 
-                              ploty])))])
+    left_line_window2 = np.array([np.flipud(np.transpose(np.vstack([left_fitx+margin, ploty])))])
     left_line_pts = np.hstack((left_line_window1, left_line_window2))
+    
+
     right_line_window1 = np.array([np.transpose(np.vstack([right_fitx-margin, ploty]))])
     right_line_window2 = np.array([np.flipud(np.transpose(np.vstack([right_fitx+margin, 
                               ploty])))])
     right_line_pts = np.hstack((right_line_window1, right_line_window2))
 
     # Draw the lane onto the warped blank image
-    cv2.fillPoly(window_img, np.int_([left_line_pts]), (100, 100, 0))
-    cv2.fillPoly(window_img, np.int_([right_line_pts]), (100, 100, 0))
-    result = cv2.addWeighted(out_img, 1, window_img, 0.3, 0)
+    cv2.fillPoly(window_img, np.int_([left_line_pts]), (0, 0, 100))
+    cv2.fillPoly(window_img, np.int_([right_line_pts]), (0, 0, 100))
+    
+
     # --------------------------------------------------------------------------------------------- #
     # img_birdeye = cv2.cvtColor(img_birdeye*255, cv2.COLOR_GRAY2BGR)
-    # cv2.imshow('', img_birdeye)
+    # cv2.imshow('', result)
     # cv2.waitKey()
     # exit()
 
     # OUTPUT
-    outframe = cv2.warpPerspective(
-        outframe, M_inv, (img.shape[1], img.shape[0]))
-    out.write(outframe)
+    weight = cv2.warpPerspective(window_img, M_inv, (img.shape[1], img.shape[0]))
+    result = cv2.addWeighted(img, 1, weight, 0.9, 0)
+
+    # cv2.imshow('', result)
+    # cv2.waitKey()
+    # exit()
+
+    
+    out.write(result)
