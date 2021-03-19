@@ -3,10 +3,5 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-data/
-*.avi
 *.mp4
-*.png
-*.jpg
-*.jpeg
-*.png
+*.avi
