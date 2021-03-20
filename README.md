@@ -7,6 +7,9 @@ NCKU Practices of Autonomous Driving course homework
 ## 影片素材
 [國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1](https://www.youtube.com/watch?v=0crwED4yhBA)
 
+## 成果
+![](/img/sample_advence.mp4)
+
 ## 作法
 
 參考：[OanaGaskey / Advanced-Lane-Detection - github](https://github.com/OanaGaskey/Advanced-Lane-Detection)
