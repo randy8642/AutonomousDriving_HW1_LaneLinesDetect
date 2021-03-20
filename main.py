@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 # PARAM
 SRC_PATH = './data/video.mp4'
-OUT_PATH = './output.avi'
-NUM = 240
+OUT_PATH = './output.mp4'
+NUM = 480
 
 # get frame
 cap = cv2.VideoCapture(SRC_PATH)
@@ -13,8 +13,7 @@ cap = cv2.VideoCapture(SRC_PATH)
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) 
 
-out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(
-        'M', 'J', 'P', 'G'), 24, (width, height))
+out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(*'mp4v'), 24, (width, height))
 
 LeftLane = []
 RightLane = []
@@ -28,6 +27,8 @@ for n in range(NUM):
 
     # Capture frame-by-frame
     ret, frame = cap.read()
+    if n%3!=0:
+        continue
 
     img = frame
     

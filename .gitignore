@@ -3,5 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-*.mp4
-*.avi
+output_advence.avi
+output_ori.avi
+data/video.mp4
+output.mp4
