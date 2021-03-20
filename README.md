@@ -9,4 +9,15 @@ NCKU Practices of Autonomous Driving course homework
 
 ## 作法
 
-https://github.com/OanaGaskey/Advanced-Lane-Detection
+參考：[OanaGaskey / Advanced-Lane-Detection - github](https://github.com/OanaGaskey/Advanced-Lane-Detection)
+
+**Step 1**
+* 將原始影像轉換為魚眼視角(須包含欲辨識的車道線)
+![](/img/Figure_1.png)
+
+**Step 2**
+* 將圖片做轉換並疊加
+![](/img/Figure_2.png)
+
+**Step 3**
+* 對圖片做垂直方向的加總以判別車道線位置
