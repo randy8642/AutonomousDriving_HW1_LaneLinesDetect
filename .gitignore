@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.vscode/
+
 output_advence.avi
 output_ori.avi
 data/video.mp4
