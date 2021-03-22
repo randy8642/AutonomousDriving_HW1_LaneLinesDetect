@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # PARAM
 SRC_PATH = './data/video.mp4'
 OUT_PATH = './output.mp4'
-NUM = 7200
+NUM = 1000
 
 
 # get frame
@@ -29,57 +29,63 @@ for n in range(NUM):
 
     # Capture frame-by-frame
     ret, frame = cap.read()
-    # if n < 960:
-    #     continue
+   
     img = frame
 
     # --------------------------------------------------------------------------------------------- #
 
     # Transform image to gray scale
-    # gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # # Apply sobel (derivative) in x direction, this is usefull to detect lines that tend to be vertical
-    # sobelx = cv2.Sobel(gray_img, cv2.CV_64F, 1, 0)
-    # abs_sobelx = np.absolute(sobelx)
+    # Apply sobel (derivative) in x direction, this is usefull to detect lines that tend to be vertical
+    sobelx = cv2.Sobel(gray_img, cv2.CV_64F, 1, 0)
+    abs_sobelx = np.absolute(sobelx)
+    sobely = cv2.Sobel(gray_img, cv2.CV_64F, 0, 1)
+    abs_sobely = np.absolute(sobely)
+    
 
-    # # Scale result to 0-255
-    # scaled_sobel = np.uint8(255*abs_sobelx/np.max(abs_sobelx))
-    # sx_binary = np.zeros_like(scaled_sobel)
+    # Scale result to 0-255
+    scaled_sobelx = np.uint8(255*abs_sobelx/np.max(abs_sobelx))
+    sx_binary = np.zeros_like(scaled_sobelx)
+    scaled_sobely = np.uint8(255*abs_sobely/np.max(abs_sobely))
+    sy_binary = np.zeros_like(scaled_sobely)
 
-    # # Keep only derivative values that are in the margin of interest
-    # sx_binary[(scaled_sobel >= 30) & (scaled_sobel <= 255)] = 1
+    # Keep only derivative values that are in the margin of interest
+    sx_binary[(scaled_sobelx >= 20) & (scaled_sobelx <= 130)] = 1
+    sy_binary[(scaled_sobely >= 100) & (scaled_sobely <= 150)] = 1
 
-    # # Detect pixels that are white in the grayscale image
-    # white_binary = np.zeros_like(gray_img)
-    # white_binary[(gray_img > 190) & (gray_img <= 220)] = 1
+    kernel = np.ones((3, 3), np.uint8)
+    sx_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(sx_binary), kernel, iterations=2))
+    sy_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(sy_binary), kernel, iterations=2))
 
     # --------------------------------------------------------------------------------------------- #
 
-    hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
+    # hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
 
-    lower = np.uint8([ 20,   100, 20])
-    upper = np.uint8([ 40, 190, 60])
-    yellow_binary = cv2.inRange(hls, lower, upper)
-    kernel = np.ones((3, 3), np.uint8)
-    yellow_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(yellow_binary), kernel, iterations=1))
+    # lower = np.uint8([ 20,   100, 20])
+    # upper = np.uint8([ 40, 190, 60])
+    # yellow_binary = cv2.inRange(hls, lower, upper)
+    # kernel = np.ones((3, 3), np.uint8)
+    # yellow_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(yellow_binary), kernel, iterations=1))
 
-    lower = np.uint8([  20, 190,   5])
-    upper = np.uint8([100, 225, 30])
-    white_binary = cv2.inRange(hls, lower, upper)
-    kernel = np.ones((3, 3), np.uint8)
-    white_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(white_binary), kernel, iterations=2))
+    # lower = np.uint8([  20, 190,   5])
+    # upper = np.uint8([100, 225, 30])
+    # white_binary = cv2.inRange(hls, lower, upper)
+    # kernel = np.ones((3, 3), np.uint8)
+    # white_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(white_binary), kernel, iterations=2))
 
-    img_combine = np.logical_or(yellow_binary, white_binary).astype(np.uint8)
+    # img_combine = np.logical_or(yellow_binary, white_binary).astype(np.uint8)
     # img_combine = np.logical_or(img_combine, sx_binary).astype(np.uint8)
+    img_combine = np.logical_and(sx_binary,sy_binary).astype(np.uint8)
 
     # fig,ax = plt.subplots(1,2)
-    # ax[0].imshow(hls)
-    # ax[1].imshow(white_binary)
+    # ax[0].imshow(scaled_sobelx)
+    # ax[1].imshow(np.logical_and(sx_binary,sy_binary))
     # plt.show()
     # print(n)
     # cv2.imshow('',cv2.cvtColor(img_combine*255,cv2.COLOR_GRAY2BGR) )
     # cv2.waitKey()
-    # continue
+    continue
 
     # --------------------------------------------------------------------------------------------- #
     # MASK
