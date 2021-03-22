@@ -29,8 +29,7 @@ for n in range(NUM):
 
     # Capture frame-by-frame
     ret, frame = cap.read()
-    if n < 135:
-        continue
+   
     img = frame
 
     # --------------------------------------------------------------------------------------------- #
@@ -74,7 +73,7 @@ for n in range(NUM):
 
     # fig,ax = plt.subplots(1,2)
     # ax[0].imshow(hls)
-    # ax[1].imshow(white_binary)
+    # ax[1].imshow(img_combine)
     # plt.show()
     # print(n)
     # cv2.imshow('',cv2.cvtColor(img_combine*255,cv2.COLOR_GRAY2BGR) )
@@ -152,7 +151,7 @@ for n in range(NUM):
     binary_warped = img_birdeye
 
     # 垂直方向疊加
-    histogram = np.sum(binary_warped[binary_warped.shape[0]//2:, :], axis=0)
+    histogram = np.sum(binary_warped, axis=0)
     # plt.clf()
     # plt.plot(histogram)
     # plt.draw()
@@ -176,26 +175,30 @@ for n in range(NUM):
     # ---------------------------------------------------------------------------------- #
 
     nwindows = 9
-    margin = 5
+    margin = 7
     minpixel = 100
 
     window_height = np.int32(binary_warped.shape[0]//nwindows)
 
-    laneCurrent = np.array(laneBase, dtype=np.int32)
+    
 
     laneLine_y = np.linspace(
         0, binary_warped.shape[0]-1, binary_warped.shape[0])
-    laneLine_x = np.zeros([4, binary_warped.shape[0]])
+    laneLine_x = np.ones([4, binary_warped.shape[0]]) * -10
 
-    for n_lane in range(len(laneCurrent)):
+    for n_lane in range(len(laneBase)):
 
         x_point = []
         y_point = []
 
-        lane = laneCurrent[n_lane]
-        x_range = lane - margin, lane + margin
+        
 
-        for n_window in range(nwindows):
+        # Up
+        laneCurrent = laneBase[n_lane]
+        for n_window in range(nwindows//2):
+            
+            x_range = laneCurrent - margin, laneCurrent + margin
+
             win_y_low = binary_warped.shape[0] - (n_window+1)*window_height
             win_y_high = binary_warped.shape[0] - n_window*window_height
 
@@ -208,10 +211,36 @@ for n in range(NUM):
                 x_point.extend(x_nonzero)
                 y_point.extend(y_nonzero)
 
-                laneCurrent[n_lane] = np.mean(
-                    x_nonzero, axis=0, dtype=np.int32)
+                laneCurrent = np.mean(x_nonzero, axis=0, dtype=np.int32)
 
+        # DOWN
+        laneCurrent = laneBase[n_lane]
+        for n_window in range(nwindows//2):
+
+            x_range = laneCurrent - margin, laneCurrent + margin
+
+            win_y_low = n_window*window_height
+            win_y_high = (n_window+1)*window_height
+
+            window = binary_warped[win_y_low:win_y_high, x_range[0]:x_range[1]]
+            y_nonzero, x_nonzero = np.nonzero(window)
+            x_nonzero += x_range[0]
+            y_nonzero += win_y_low
+
+            if np.count_nonzero(window) > minpixel:
+                x_point.extend(x_nonzero)
+                y_point.extend(y_nonzero)
+
+                laneCurrent = np.mean(x_nonzero, axis=0, dtype=np.int32)
+            
+        # tmpimg = cv2.cvtColor(binary_warped*255,cv2.COLOR_GRAY2BGR)
+        # for xx in range(len(y_point)):
+
+        #     tmpimg = cv2.circle(tmpimg, (x_point[xx],y_point[xx]), 1, (0,255,0), 1)
+        # cv2.imshow('',tmpimg)
+        # cv2.waitKey()
         if len(y_point) > 0:
+            
             fit = np.polyfit(y_point, x_point, 2)
             laneLine_x[n_lane, :] = fit[0] * \
                 laneLine_y**2 + fit[1]*laneLine_y + fit[2]
@@ -231,6 +260,7 @@ for n in range(NUM):
 
   
     for line_x in laneLine_x:
+        
         if np.abs(line_x[-1]-line_x[0]) > 30:
             continue
 
