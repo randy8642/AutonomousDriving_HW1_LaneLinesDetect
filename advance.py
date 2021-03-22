@@ -17,6 +17,10 @@ height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(
     *'mp4v'), 24, (width, height))
 
+tmpout = cv2.VideoWriter('./tmp.mp4', cv2.VideoWriter_fourcc(
+    *'mp4v'), 24, (width, height))
+
+
 for n in range(NUM):
     n += 1
     if n % 20 == 0:
@@ -24,7 +28,7 @@ for n in range(NUM):
 
     # Capture frame-by-frame
     ret, frame = cap.read()
-
+    
     img = frame
 
     # --------------------------------------------------------------------------------------------- #
@@ -45,40 +49,48 @@ for n in range(NUM):
 
     # Detect pixels that are white in the grayscale image
     white_binary = np.zeros_like(gray_img)
-    white_binary[(gray_img > 200) & (gray_img <= 255)] = 1
-
+    white_binary[(gray_img > 190) & (gray_img <= 220)] = 1
+    
     # --------------------------------------------------------------------------------------------- #
     # Convert image to HLS
     hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
-    # H = hls[:, :, 0]
-    S = hls[:, :, 2]
-    sat_binary = np.zeros_like(S)
-    # Detect pixels that have a high saturation value
-    sat_binary[(S > 30) & (S <= 200)] = 1
-    sat_binary[:460, :] = 0
+    L = hls[:, :, 1]
+    # S = hls[:, :, 2]
 
-    # hue_binary = np.zeros_like(H)
-    # # Detect pixels that are yellow using the hue component
-    # hue_binary[(H > 40) & (H <= 100)] = 1
+    # sat_binary = np.zeros_like(S)
+    # sat_binary[(S > 30) & (S <= 200)] = 1
+    # sat_binary[:460, :] = 0
+
+    light_binary = np.zeros_like(L)
+    light_binary[(L> 140) & (L <= 170)] = 1
+    light_binary[:460, :] = 0
 
     img_combine = np.logical_or(sx_binary, white_binary).astype(np.uint8)
-    img_combine = np.logical_or(img_combine, sat_binary).astype(np.uint8)
+    # img_combine = np.logical_or(img_combine, sat_binary).astype(np.uint8)
+    img_combine = np.logical_or(img_combine, light_binary).astype(np.uint8)
+    
+    
+
+    
+    tmpout.write(cv2.cvtColor(img_combine*255, cv2.COLOR_GRAY2BGR))
+
 
     # --------------------------------------------------------------------------------------------- #
     # MASK
-    # mask_ROI = np.zeros([height, width, 1], dtype=np.uint8)
-    # dots_ROI = np.array([(100, 700), (450, 250), (830, 250), (1180, 700)])
-    # cv2.drawContours(mask_ROI, [dots_ROI], 0, 255, -1)
-    # mask_ROI = cv2.bitwise_not(mask_ROI)
+    mask_ROI = np.zeros([height, width, 1], dtype=np.uint8)
+    dots_ROI = np.array([(-680, 720), (445, 460), (950, 460), (2085, 720)])
+    cv2.drawContours(mask_ROI, [dots_ROI], 0, 255, -1)
+    mask_ROI = cv2.bitwise_not(mask_ROI)
     # mask_LOGO = np.zeros([height, width, 1], dtype=np.uint8)
     # dots_LOGO = np.array(
     #     [(1040, 660), (1260, 660), (1260, 715), (1040, 715)])
     # cv2.drawContours(mask_LOGO, [dots_LOGO], 0, 255, -1)
     # mask = cv2.bitwise_or(mask_ROI, mask_LOGO)
-    # mask = cv2.bitwise_not(mask)
+    mask = cv2.bitwise_not(mask_ROI)
 
-    # img_combine = cv2.bitwise_or(img_combine, img_combine, mask=mask)
-
+    img_combine = cv2.bitwise_or(img_combine, img_combine, mask=mask)
+    
+   
     # --------------------------------------------------------------------------------------------- #
 
     # Source points taken from images with straight lane lines, these are to become parallel after the warp transform
@@ -109,15 +121,16 @@ for n in range(NUM):
     img_birdeye = cv2.warpPerspective(
         src=img_combine, M=M, dsize=(img.shape[0], img.shape[1]))
 
-    # cv2.line(img, (-644, 720), (390, 460), color=(0, 255, 0))
-    # cv2.line(img, (390, 460), (950, 460), color=(0, 255, 0))
+    # cv2.line(img, (-680, 720), (445, 460), color=(0, 255, 0))
+    # cv2.line(img, (445, 460), (950, 460), color=(0, 255, 0))
     # cv2.line(img, (950, 460), (2085, 720), color=(0, 255, 0))
-    # cv2.line(img, (2085, 720), (-644, 720), color=(0, 255, 0))
+    # cv2.line(img, (2085, 720), (-680, 720), color=(0, 255, 0))
     # cv2.imshow('', img)
     # cv2.waitKey()
-
+    # continue
     # cv2.imshow('', cv2.cvtColor(img_birdeye*255, cv2.COLOR_GRAY2BGR))
     # cv2.waitKey()
+    # continue
 
     # plt.imshow(img_birdeye)
     # plt.axvline(256)
@@ -135,12 +148,12 @@ for n in range(NUM):
 
     # 垂直方向疊加
     histogram = np.sum(binary_warped[binary_warped.shape[0]//2:, :], axis=0)
-
+    
     areaBoundary = \
         0, \
         int(histogram.shape[0]//4), \
         int(histogram.shape[0]//4 * 2), \
-        int(histogram.shape[0]//4*3), \
+        int(histogram.shape[0]//4 * 3), \
         histogram.shape[0]
 
     laneBase = \
@@ -151,20 +164,30 @@ for n in range(NUM):
                    ) + areaBoundary[2],
          np.argmax(histogram[areaBoundary[3]:areaBoundary[4]]) + areaBoundary[3]]
 
+    for n_lane in range(len(laneBase)):
+        if laneBase[n_lane] < 70:
+            laneBase[n_lane] = -1
+        
+
+
+
     # ---------------------------------------------------------------------------------- #
 
     nwindows = 9
-    margin = 30
-    minpixel = 50
+    margin = 5
+    minpixel = 40
 
     window_height = np.int32(binary_warped.shape[0]//nwindows)
 
     laneCurrent = np.array(laneBase, dtype=np.int32)
 
-    laneLine_y = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0])
+    laneLine_y = np.linspace(
+        0, binary_warped.shape[0]-1, binary_warped.shape[0])
     laneLine_x = np.zeros([4, binary_warped.shape[0]])
 
     for n_lane in range(len(laneCurrent)):
+        if laneCurrent[n_lane] < 0:
+            continue
         x_point = []
         y_point = []
 
@@ -175,29 +198,23 @@ for n in range(NUM):
             win_y_low = binary_warped.shape[0] - (n_window+1)*window_height
             win_y_high = binary_warped.shape[0] - n_window*window_height
 
-            
-            
-            
-            window = binary_warped[win_y_low:win_y_high,x_range[0]:x_range[1]]
+            window = binary_warped[win_y_low:win_y_high, x_range[0]:x_range[1]]
             y_nonzero, x_nonzero = np.nonzero(window)
             x_nonzero += x_range[0]
             y_nonzero += win_y_low
-            
+
             x_point.extend(x_nonzero)
             y_point.extend(y_nonzero)
-            
-            
 
             # Update lanebase
             if np.count_nonzero(window) > minpixel:
-                laneCurrent[n_lane] = np.mean(x_nonzero, axis=0, dtype=np.int32)
+                laneCurrent[n_lane] = np.mean(
+                    x_nonzero, axis=0, dtype=np.int32)
+        if len(y_point) > 0:
 
-        fit = np.polyfit(y_point, x_point, 2)
-        laneLine_x[n_lane, :] = fit[0] * laneLine_y**2 + fit[1]*laneLine_y + fit[2]
-
-        
-       
-    
+            fit = np.polyfit(y_point, x_point, 2)
+            laneLine_x[n_lane, :] = fit[0] * \
+                laneLine_y**2 + fit[1]*laneLine_y + fit[2]
 
     # --------------------------------------------------------------------------------------------- #
 
@@ -209,12 +226,13 @@ for n in range(NUM):
 
     laneDraw = []
     for line_x in laneLine_x:
-        lineWindow1 = np.expand_dims(np.vstack([line_x - margin, laneLine_y]).T, axis=0)
-        lineWindow2 = np.expand_dims(np.flipud(np.vstack([line_x + margin, laneLine_y]).T), axis=0)
+        lineWindow1 = np.expand_dims(
+            np.vstack([line_x - margin, laneLine_y]).T, axis=0)
+        lineWindow2 = np.expand_dims(
+            np.flipud(np.vstack([line_x + margin, laneLine_y]).T), axis=0)
         linePts = np.hstack((lineWindow1, lineWindow2))
         laneDraw.append(linePts)
-       
-        
+
     for line in laneDraw:
         cv2.fillPoly(window_img, np.int32([line]), (0, 0, 100))
 
@@ -226,12 +244,10 @@ for n in range(NUM):
     # continue
 
     # --------------------------------------------------------------------------------------------- #
-  
 
     # OUTPUT
-    weight = cv2.warpPerspective(window_img, M_inv, (img.shape[1], img.shape[0]))
+    weight = cv2.warpPerspective(
+        window_img, M_inv, (img.shape[1], img.shape[0]))
     result = cv2.addWeighted(img, 1, weight, 0.9, 0)
-
-    
 
     out.write(result)
