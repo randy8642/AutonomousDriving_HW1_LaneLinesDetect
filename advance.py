@@ -17,11 +17,10 @@ height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(
     *'mp4v'), 24, (width, height))
 
-# tmpout = cv2.VideoWriter('./tmp.mp4', cv2.VideoWriter_fourcc(
-#     *'mp4v'), 24, (height, width))
+tmpout = cv2.VideoWriter('./tmp.mp4', cv2.VideoWriter_fourcc(
+    *'mp4v'), 24, (height, width))
 
-# plt.ion()
-# plt.plot()
+
 
 for n in range(NUM):
     n += 1
@@ -258,9 +257,9 @@ for n in range(NUM):
         window_img, M_inv, (img.shape[1], img.shape[0]))
     result = cv2.addWeighted(img, 1, weight, 0.9, 0)
 
-    # o = cv2.cvtColor(img_birdeye*255, cv2.COLOR_GRAY2BGR)
-    # r = cv2.addWeighted(o, 1, window_img, 0.9, 0)
-    # tmpout.write(r)
+    o = cv2.cvtColor(img_birdeye*255, cv2.COLOR_GRAY2BGR)
+    r = cv2.addWeighted(o, 1, window_img, 0.9, 0)
+    tmpout.write(r)
 
     out.write(result)
     
