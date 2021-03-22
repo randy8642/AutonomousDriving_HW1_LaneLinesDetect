@@ -224,7 +224,7 @@ for n in range(NUM):
    
     for line in laneDraw:
 
-        if line[0, line.shape[1]//2, 0] - line[0, 0, 0] > 50:
+        if line[0, line.shape[1]//2, 0] - line[0, 0, 0] > 30:
             continue
         cv2.fillPoly(window_img, np.int32([line]), (0, 0, 100))
 
