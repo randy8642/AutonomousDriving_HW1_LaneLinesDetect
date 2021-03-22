@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # PARAM
-SRC_PATH = './data/video_Trim.mp4'
+SRC_PATH = './data/video.mp4'
 OUT_PATH = './output.mp4'
-NUM = 480
+NUM = 7200
 
 
 # get frame
@@ -17,9 +17,11 @@ height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(
     *'mp4v'), 24, (width, height))
 
-tmpout = cv2.VideoWriter('./tmp.mp4', cv2.VideoWriter_fourcc(
-    *'mp4v'), 24, (height, width))
+# tmpout = cv2.VideoWriter('./tmp.mp4', cv2.VideoWriter_fourcc(
+#     *'mp4v'), 24, (height, width))
 
+# plt.ion()
+# plt.plot()
 
 for n in range(NUM):
     n += 1
@@ -28,45 +30,54 @@ for n in range(NUM):
 
     # Capture frame-by-frame
     ret, frame = cap.read()
-
+    if n < 135:
+        continue
     img = frame
 
     # --------------------------------------------------------------------------------------------- #
 
     # Transform image to gray scale
-    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # Apply sobel (derivative) in x direction, this is usefull to detect lines that tend to be vertical
-    sobelx = cv2.Sobel(gray_img, cv2.CV_64F, 1, 0)
-    abs_sobelx = np.absolute(sobelx)
+    # # Apply sobel (derivative) in x direction, this is usefull to detect lines that tend to be vertical
+    # sobelx = cv2.Sobel(gray_img, cv2.CV_64F, 1, 0)
+    # abs_sobelx = np.absolute(sobelx)
 
-    # Scale result to 0-255
-    scaled_sobel = np.uint8(255*abs_sobelx/np.max(abs_sobelx))
-    sx_binary = np.zeros_like(scaled_sobel)
+    # # Scale result to 0-255
+    # scaled_sobel = np.uint8(255*abs_sobelx/np.max(abs_sobelx))
+    # sx_binary = np.zeros_like(scaled_sobel)
 
-    # Keep only derivative values that are in the margin of interest
-    sx_binary[(scaled_sobel >= 30) & (scaled_sobel <= 255)] = 1
+    # # Keep only derivative values that are in the margin of interest
+    # sx_binary[(scaled_sobel >= 30) & (scaled_sobel <= 255)] = 1
 
-    # Detect pixels that are white in the grayscale image
-    white_binary = np.zeros_like(gray_img)
-    white_binary[(gray_img > 190) & (gray_img <= 220)] = 1
+    # # Detect pixels that are white in the grayscale image
+    # white_binary = np.zeros_like(gray_img)
+    # white_binary[(gray_img > 190) & (gray_img <= 220)] = 1
 
     # --------------------------------------------------------------------------------------------- #
 
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # set lower and upper color limits
-    S = hsv[:, :, 1]
+    hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
 
-    # Threshold the HSV image
-    s_binary = np.zeros_like(S)
-    s_binary[(S > 100) & (S <= 150)] = 1
+    lower = np.uint8([ 20,   100, 20])
+    upper = np.uint8([ 40, 190, 60])
+    yellow_binary = cv2.inRange(hls, lower, upper)
     kernel = np.ones((3, 3), np.uint8)
-    s_binary = cv2.bitwise_not(
-        cv2.erode(cv2.bitwise_not(s_binary), kernel, iterations=1))
+    yellow_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(yellow_binary), kernel, iterations=1))
 
-    # img_combine = np.logical_or(sx_binary, white_binary).astype(np.uint8)
-    img_combine = np.logical_or(white_binary, s_binary).astype(np.uint8)
+    lower = np.uint8([  20, 190,   5])
+    upper = np.uint8([70, 225, 30])
+    white_binary = cv2.inRange(hls, lower, upper)
+    kernel = np.ones((3, 3), np.uint8)
+    white_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(white_binary), kernel, iterations=2))
 
+    img_combine = np.logical_or(yellow_binary, white_binary).astype(np.uint8)
+    # img_combine = np.logical_or(img_combine, sx_binary).astype(np.uint8)
+
+    # fig,ax = plt.subplots(1,2)
+    # ax[0].imshow(hls)
+    # ax[1].imshow(white_binary)
+    # plt.show()
+    # print(n)
     # cv2.imshow('',cv2.cvtColor(img_combine*255,cv2.COLOR_GRAY2BGR) )
     # cv2.waitKey()
     # continue
@@ -143,6 +154,10 @@ for n in range(NUM):
 
     # 垂直方向疊加
     histogram = np.sum(binary_warped[binary_warped.shape[0]//2:, :], axis=0)
+    # plt.clf()
+    # plt.plot(histogram)
+    # plt.draw()
+    # plt.pause(0.03)
 
     areaBoundary = \
         0, \
@@ -162,8 +177,8 @@ for n in range(NUM):
     # ---------------------------------------------------------------------------------- #
 
     nwindows = 9
-    margin = 10
-    minpixel = 60
+    margin = 5
+    minpixel = 100
 
     window_height = np.int32(binary_warped.shape[0]//nwindows)
 
@@ -190,7 +205,6 @@ for n in range(NUM):
             x_nonzero += x_range[0]
             y_nonzero += win_y_low
 
-            # Update lanebase
             if np.count_nonzero(window) > minpixel:
                 x_point.extend(x_nonzero)
                 y_point.extend(y_nonzero)
@@ -202,6 +216,11 @@ for n in range(NUM):
             fit = np.polyfit(y_point, x_point, 2)
             laneLine_x[n_lane, :] = fit[0] * \
                 laneLine_y**2 + fit[1]*laneLine_y + fit[2]
+        
+       
+            
+            
+            
 
     # --------------------------------------------------------------------------------------------- #
 
@@ -211,39 +230,39 @@ for n in range(NUM):
 
     margin = 7
 
-    laneDraw = []
+  
     for line_x in laneLine_x:
+        if np.abs(line_x[-1]-line_x[0]) > 30:
+            continue
+
         lineWindow1 = np.expand_dims(
             np.vstack([line_x - margin, laneLine_y]).T, axis=0)
         lineWindow2 = np.expand_dims(
             np.flipud(np.vstack([line_x + margin, laneLine_y]).T), axis=0)
         linePts = np.hstack((lineWindow1, lineWindow2))
-        laneDraw.append(linePts)
+        
 
+        cv2.fillPoly(window_img, np.int32([linePts]), (0, 0, 100))
 
-   
-    for line in laneDraw:
+  
 
-        if line[0, line.shape[1]//2, 0] - line[0, 0, 0] > 30:
-            continue
-        cv2.fillPoly(window_img, np.int32([line]), (0, 0, 100))
+        
 
-    # out = cv2.cvtColor(img_birdeye*255,cv2.COLOR_GRAY2BGR)
-    # out = cv2.addWeighted(out, 1, window_img, 0.9, 0)
-
-    # cv2.imshow('',out)
-    # cv2.waitKey()
-    # continue
+    
 
     # --------------------------------------------------------------------------------------------- #
+    
 
     # OUTPUT
     weight = cv2.warpPerspective(
         window_img, M_inv, (img.shape[1], img.shape[0]))
     result = cv2.addWeighted(img, 1, weight, 0.9, 0)
 
-    o = cv2.cvtColor(img_birdeye*255, cv2.COLOR_GRAY2BGR)
-    r = cv2.addWeighted(o, 1, window_img, 0.9, 0)
-    tmpout.write(r)
+    # o = cv2.cvtColor(img_birdeye*255, cv2.COLOR_GRAY2BGR)
+    # r = cv2.addWeighted(o, 1, window_img, 0.9, 0)
+    # tmpout.write(r)
 
     out.write(result)
+    
+    # cv2.imshow('',r )
+    # cv2.waitKey()
