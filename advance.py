@@ -85,7 +85,7 @@ for n in range(NUM):
     # print(n)
     # cv2.imshow('',cv2.cvtColor(img_combine*255,cv2.COLOR_GRAY2BGR) )
     # cv2.waitKey()
-    continue
+    # continue
 
     # --------------------------------------------------------------------------------------------- #
     # MASK
