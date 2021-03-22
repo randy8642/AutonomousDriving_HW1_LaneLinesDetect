@@ -24,3 +24,6 @@ NCKU Practices of Autonomous Driving course homework
 
 **Step 3**
 * 對圖片做垂直方向的加總以判別車道線位置
+
+**Step 4**
+* 4
