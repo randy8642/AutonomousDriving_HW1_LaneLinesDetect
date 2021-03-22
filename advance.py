@@ -29,7 +29,8 @@ for n in range(NUM):
 
     # Capture frame-by-frame
     ret, frame = cap.read()
-   
+    # if n < 960:
+    #     continue
     img = frame
 
     # --------------------------------------------------------------------------------------------- #
@@ -63,7 +64,7 @@ for n in range(NUM):
     yellow_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(yellow_binary), kernel, iterations=1))
 
     lower = np.uint8([  20, 190,   5])
-    upper = np.uint8([70, 225, 30])
+    upper = np.uint8([100, 225, 30])
     white_binary = cv2.inRange(hls, lower, upper)
     kernel = np.ones((3, 3), np.uint8)
     white_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(white_binary), kernel, iterations=2))
@@ -73,7 +74,7 @@ for n in range(NUM):
 
     # fig,ax = plt.subplots(1,2)
     # ax[0].imshow(hls)
-    # ax[1].imshow(img_combine)
+    # ax[1].imshow(white_binary)
     # plt.show()
     # print(n)
     # cv2.imshow('',cv2.cvtColor(img_combine*255,cv2.COLOR_GRAY2BGR) )
