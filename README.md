@@ -5,9 +5,15 @@ NCKU Practices of Autonomous Driving course homework
 車道邊線偵測
 
 ## 影片素材
-[國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube](https://www.youtube.com/watch?v=0crwED4yhBA)
+1. [Udacity Test Video - solidWhiteRight](https://github.com/udacity/CarND-LaneLines-P1/blob/master/test_videos/solidWhiteRight.mp4)
+2. [國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube](https://www.youtube.com/watch?v=0crwED4yhBA)
 
 ## 成果
+1. Udacity Test Video - solidWhiteRight
+![](/img/udacity_test_solidWhiteRight.gif)
+完整連結：[udacity_test_solidWhiteRight](/img/udacity_test_solidWhiteRight.mp4)
+
+2. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube
 ![](/img/sample.gif)
 完整連結：[NCKU_AutonomousDriving_HW1_LaneLinesDetect - Youtube](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
 
@@ -15,7 +21,9 @@ NCKU Practices of Autonomous Driving course homework
 
 ## 作法
 
-參考：[OanaGaskey / Advanced-Lane-Detection - github](https://github.com/OanaGaskey/Advanced-Lane-Detection)
+參考：\
+[OanaGaskey / Advanced-Lane-Detection - github](https://github.com/OanaGaskey/Advanced-Lane-Detection)\
+[udacity / CarND-LaneLines-P1 - github](https://github.com/udacity/CarND-LaneLines-P1)
 
 ### Step 1 特徵擷取
 1. 將圖片經過 Sobel x 和 Sobel y 轉換
@@ -56,4 +64,6 @@ NCKU Practices of Autonomous Driving course homework
 ![](/img/laneDetect_ori_result.jpg)
 
 ## 心得
-無
+>車道偵測最困難的地方是特徵擷取部分，
+>需要套用和嘗試各種邊緣擷取及色彩的閥值，
+>才能得到將車道特徵最大化的圖
