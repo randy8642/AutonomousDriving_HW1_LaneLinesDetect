@@ -179,7 +179,7 @@ for n in range(NUM):
 
     laneLine_y = np.linspace(
         0, binary_warped.shape[0]-1, binary_warped.shape[0])
-    laneLine_x = np.ones([4, binary_warped.shape[0]]) * -10
+    laneLine_x = np.ones([4, binary_warped.shape[0]]) * -100
 
     for n_lane in range(len(laneBase)):
 
