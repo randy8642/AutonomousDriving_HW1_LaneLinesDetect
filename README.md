@@ -8,8 +8,8 @@ NCKU Practices of Autonomous Driving course homework
 [國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1](https://www.youtube.com/watch?v=0crwED4yhBA)
 
 ## 成果
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/5E8ZZ89CN6o/0.jpg)](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
-![](/img/sample_advence.gif)
+[![](/img/sample_advence.gif)](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
+
 
 ## 作法
 
