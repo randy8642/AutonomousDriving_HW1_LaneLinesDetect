@@ -240,13 +240,14 @@ for n in range(NUM):
 
                 laneCurrent = np.mean(x_nonzero, axis=0, dtype=np.int32)
         # print(y_nonzero)
-        tmpimg = cv2.cvtColor(binary_warped*255, cv2.COLOR_GRAY2BGR)
-        for xx in range(len(y_point)):
+        # tmpimg = cv2.cvtColor(binary_warped*255, cv2.COLOR_GRAY2BGR)
+        # for xx in range(len(y_point)):
 
-            tmpimg = cv2.circle(
-                tmpimg, (x_point[xx], y_point[xx]), 1, (0, 255, 0), 1)
-        cv2.imshow('', tmpimg)
-        cv2.waitKey()
+        #     tmpimg = cv2.circle(
+        #         tmpimg, (x_point[xx], y_point[xx]), 1, (0, 255, 0), 1)
+        
+        # cv2.imshow('', tmpimg)
+        # cv2.waitKey()
         if len(y_point) > 0:
 
             fit = np.polyfit(y_point, x_point, 2)
@@ -262,8 +263,8 @@ for n in range(NUM):
     margin = 7
 
     for line_x in laneLine_x:
-
-        if np.abs(line_x[-1]-line_x[0]) > 30:
+        # print(np.abs(line_x[-1]-line_x[0]))
+        if np.abs(line_x[-1]-line_x[0]) > 60:
             continue
 
         lineWindow1 = np.expand_dims(
@@ -287,5 +288,5 @@ for n in range(NUM):
 
     out.write(result)
 
-    cv2.imshow('',r )
-    cv2.waitKey()
+    # cv2.imshow('',r )
+    # cv2.waitKey()
