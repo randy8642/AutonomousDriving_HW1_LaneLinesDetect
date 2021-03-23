@@ -17,7 +17,7 @@ NCKU Practices of Autonomous Driving course homework
 
 參考：[OanaGaskey / Advanced-Lane-Detection - github](https://github.com/OanaGaskey/Advanced-Lane-Detection)
 
-**Step 1**
+### Step 1 特徵擷取
 1. 將圖片經過 Sobel x 和 Sobel y 轉換
 ![](/img/sobel_result.png)
 2. 邊緣膨脹
@@ -26,14 +26,34 @@ NCKU Practices of Autonomous Driving course homework
 ![](/img/sobelAND_result.png)
 
 
-**Step 2**
+### Step 2 視角轉換
 * 將影像轉換為鳥瞰視角
 ![](/img/birdeye_area.jpg)
 ![](/img/birdeye_result.jpg)
 
-**Step 3**
-* 對圖片做垂直方向的加總以判別車道線位置
+### Step 3 偵側車道
+* 對圖片做垂直方向的加總以判別車道線位置\
+    共4個判斷區間
 ![](/img/histogram.jpeg)
 
-**Step 4**
-* 4
+### Step 4 車道追蹤
+1. 將上一步驟的峰值位置當作車道線起點
+2. 由下而上，將畫面切割為數個水平區塊
+3. 透過前一區塊中的**非零像素平均**調整下一區塊左右位置以追蹤車道彎曲
+4. 每一判斷區間執行一次
+
+    ![](/img/laneDetect_window.jpeg)
+
+### Step 5 擬合曲線
+1. 將上一步驟所取得的像素點做**二次曲線**擬合
+2. 透過**彎曲程度**判斷擬合是否正確
+
+    ![](/img/laneDetect_fitpoly.jpeg)
+
+### Step 6 影像疊合
+1. 將繪製的車道線圖層轉換回原始視角
+2. 將車道線塗層疊加到原始影像上
+![](/img/laneDetect_ori_result.jpg)
+
+## 心得
+無
