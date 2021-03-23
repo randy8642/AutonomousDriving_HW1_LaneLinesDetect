@@ -9,6 +9,7 @@ NCKU Practices of Autonomous Driving course homework
 
 ## 成果
 [![](/img/sample_advence.gif)](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
+點擊可至youtube觀看
 
 
 ## 作法
