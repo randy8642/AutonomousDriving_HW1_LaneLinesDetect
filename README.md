@@ -1,4 +1,4 @@
-# AutonomousDriving_HW1_LaneLinesDetect
+# 自動駕駛實務 作業1 道路邊線檢測 AutonomousDriving_HW1_LaneLinesDetect
 NCKU Practices of Autonomous Driving course homework
 
 ## 目標
