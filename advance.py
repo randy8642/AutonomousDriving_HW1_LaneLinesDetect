@@ -266,6 +266,10 @@ for n in range(NUM):
         # print(np.abs(line_x[-1]-line_x[0]))
         if np.abs(line_x[-1]-line_x[0]) > 60:
             continue
+        if np.abs(line_x[-1] - line_x[len(line_x)//2]) > 60:
+            continue
+        if np.abs(line_x[0] - line_x[len(line_x)//2]) > 60:
+            continue
 
         lineWindow1 = np.expand_dims(
             np.vstack([line_x - margin, laneLine_y]).T, axis=0)
