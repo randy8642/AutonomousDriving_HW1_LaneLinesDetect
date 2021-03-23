@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # PARAM
 SRC_PATH = './data/video.mp4'
 OUT_PATH = './output.mp4'
-NUM = 1000
+NUM = 7200
 
 
 # get frame
@@ -21,7 +21,6 @@ tmpout = cv2.VideoWriter('./tmp.mp4', cv2.VideoWriter_fourcc(
     *'mp4v'), 24, (height, width))
 
 
-
 for n in range(NUM):
     n += 1
     if n % 20 == 0:
@@ -29,7 +28,7 @@ for n in range(NUM):
 
     # Capture frame-by-frame
     ret, frame = cap.read()
-   
+
     img = frame
 
     # --------------------------------------------------------------------------------------------- #
@@ -42,7 +41,6 @@ for n in range(NUM):
     abs_sobelx = np.absolute(sobelx)
     sobely = cv2.Sobel(gray_img, cv2.CV_64F, 0, 1)
     abs_sobely = np.absolute(sobely)
-    
 
     # Scale result to 0-255
     scaled_sobelx = np.uint8(255*abs_sobelx/np.max(abs_sobelx))
@@ -55,8 +53,10 @@ for n in range(NUM):
     sy_binary[(scaled_sobely >= 100) & (scaled_sobely <= 150)] = 1
 
     kernel = np.ones((3, 3), np.uint8)
-    sx_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(sx_binary), kernel, iterations=2))
-    sy_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(sy_binary), kernel, iterations=2))
+    sx_binary = cv2.bitwise_not(
+        cv2.erode(cv2.bitwise_not(sx_binary), kernel, iterations=2))
+    sy_binary = cv2.bitwise_not(
+        cv2.erode(cv2.bitwise_not(sy_binary), kernel, iterations=2))
 
     # --------------------------------------------------------------------------------------------- #
 
@@ -76,7 +76,7 @@ for n in range(NUM):
 
     # img_combine = np.logical_or(yellow_binary, white_binary).astype(np.uint8)
     # img_combine = np.logical_or(img_combine, sx_binary).astype(np.uint8)
-    img_combine = np.logical_and(sx_binary,sy_binary).astype(np.uint8)
+    img_combine = np.logical_and(sx_binary, sy_binary).astype(np.uint8)
 
     # fig,ax = plt.subplots(1,2)
     # ax[0].imshow(scaled_sobelx)
@@ -187,8 +187,6 @@ for n in range(NUM):
 
     window_height = np.int32(binary_warped.shape[0]//nwindows)
 
-    
-
     laneLine_y = np.linspace(
         0, binary_warped.shape[0]-1, binary_warped.shape[0])
     laneLine_x = np.ones([4, binary_warped.shape[0]]) * -10
@@ -198,12 +196,10 @@ for n in range(NUM):
         x_point = []
         y_point = []
 
-        
-
         # Up
         laneCurrent = laneBase[n_lane]
         for n_window in range(nwindows//2):
-            
+
             x_range = laneCurrent - margin, laneCurrent + margin
 
             win_y_low = binary_warped.shape[0] - (n_window+1)*window_height
@@ -239,7 +235,7 @@ for n in range(NUM):
                 y_point.extend(y_nonzero)
 
                 laneCurrent = np.mean(x_nonzero, axis=0, dtype=np.int32)
-            
+
         # tmpimg = cv2.cvtColor(binary_warped*255,cv2.COLOR_GRAY2BGR)
         # for xx in range(len(y_point)):
 
@@ -247,15 +243,10 @@ for n in range(NUM):
         # cv2.imshow('',tmpimg)
         # cv2.waitKey()
         if len(y_point) > 0:
-            
+
             fit = np.polyfit(y_point, x_point, 2)
             laneLine_x[n_lane, :] = fit[0] * \
                 laneLine_y**2 + fit[1]*laneLine_y + fit[2]
-        
-       
-            
-            
-            
 
     # --------------------------------------------------------------------------------------------- #
 
@@ -265,9 +256,8 @@ for n in range(NUM):
 
     margin = 7
 
-  
     for line_x in laneLine_x:
-        
+
         if np.abs(line_x[-1]-line_x[0]) > 30:
             continue
 
@@ -276,18 +266,10 @@ for n in range(NUM):
         lineWindow2 = np.expand_dims(
             np.flipud(np.vstack([line_x + margin, laneLine_y]).T), axis=0)
         linePts = np.hstack((lineWindow1, lineWindow2))
-        
 
         cv2.fillPoly(window_img, np.int32([linePts]), (0, 0, 100))
 
-  
-
-        
-
-    
-
     # --------------------------------------------------------------------------------------------- #
-    
 
     # OUTPUT
     weight = cv2.warpPerspective(
@@ -299,6 +281,6 @@ for n in range(NUM):
     tmpout.write(r)
 
     out.write(result)
-    
+
     # cv2.imshow('',r )
     # cv2.waitKey()
