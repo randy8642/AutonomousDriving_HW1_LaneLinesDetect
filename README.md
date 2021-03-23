@@ -52,7 +52,7 @@ NCKU Practices of Autonomous Driving course homework
 
 ### Step 6 影像疊合
 1. 將繪製的車道線圖層轉換回原始視角
-2. 將車道線塗層疊加到原始影像上
+2. 將車道線圖層疊加到原始影像上
 ![](/img/laneDetect_ori_result.jpg)
 
 ## 心得
