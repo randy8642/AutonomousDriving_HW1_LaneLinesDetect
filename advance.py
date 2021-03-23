@@ -182,8 +182,8 @@ for n in range(NUM):
     # ---------------------------------------------------------------------------------- #
 
     nwindows = 9
-    margin = 7
-    minpixel = 100
+    margin = 40
+    minpixel = 50
 
     window_height = np.int32(binary_warped.shape[0]//nwindows)
 
@@ -198,9 +198,11 @@ for n in range(NUM):
 
         # Up
         laneCurrent = laneBase[n_lane]
-        for n_window in range(nwindows//2):
+        for n_window in range(nwindows//2+1):
 
-            x_range = laneCurrent - margin, laneCurrent + margin
+            x_range = laneCurrent - margin if laneCurrent - margin >= 0 else 0, laneCurrent + \
+                margin if laneCurrent + margin < binary_warped.shape[1] else binary_warped.shape[1] - 1
+            
 
             win_y_low = binary_warped.shape[0] - (n_window+1)*window_height
             win_y_high = binary_warped.shape[0] - n_window*window_height
@@ -220,7 +222,9 @@ for n in range(NUM):
         laneCurrent = laneBase[n_lane]
         for n_window in range(nwindows//2):
 
-            x_range = laneCurrent - margin, laneCurrent + margin
+            x_range = laneCurrent - margin if laneCurrent - margin >= 0 else 0, laneCurrent + \
+                margin if laneCurrent + margin < binary_warped.shape[1] else binary_warped.shape[1] - 1
+            
 
             win_y_low = n_window*window_height
             win_y_high = (n_window+1)*window_height
@@ -235,13 +239,14 @@ for n in range(NUM):
                 y_point.extend(y_nonzero)
 
                 laneCurrent = np.mean(x_nonzero, axis=0, dtype=np.int32)
+        # print(y_nonzero)
+        tmpimg = cv2.cvtColor(binary_warped*255, cv2.COLOR_GRAY2BGR)
+        for xx in range(len(y_point)):
 
-        # tmpimg = cv2.cvtColor(binary_warped*255,cv2.COLOR_GRAY2BGR)
-        # for xx in range(len(y_point)):
-
-        #     tmpimg = cv2.circle(tmpimg, (x_point[xx],y_point[xx]), 1, (0,255,0), 1)
-        # cv2.imshow('',tmpimg)
-        # cv2.waitKey()
+            tmpimg = cv2.circle(
+                tmpimg, (x_point[xx], y_point[xx]), 1, (0, 255, 0), 1)
+        cv2.imshow('', tmpimg)
+        cv2.waitKey()
         if len(y_point) > 0:
 
             fit = np.polyfit(y_point, x_point, 2)
@@ -282,5 +287,5 @@ for n in range(NUM):
 
     out.write(result)
 
-    # cv2.imshow('',r )
-    # cv2.waitKey()
+    cv2.imshow('',r )
+    cv2.waitKey()
