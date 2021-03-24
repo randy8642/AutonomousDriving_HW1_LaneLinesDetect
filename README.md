@@ -88,6 +88,9 @@ NCKU Practices of Autonomous Driving course homework
 ### Step 2 視角轉換
 * 將影像轉換為鳥瞰視角
 ```python
+    '''
+    src 區域參數請自行調整
+    '''
     # 原圖片轉換範圍
     src = np.float32([
         (-1000, 720),   # 左下角
