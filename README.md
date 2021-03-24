@@ -212,7 +212,7 @@ NCKU Practices of Autonomous Driving course homework
 ```
 4. 每一判斷區間執行一次
 
-    ![](/img/laneDetect_window.jpg)
+![](/img/laneDetect_window.jpg)
 
 ### Step 5 擬合曲線
 1. 將上一步驟所取得的像素點做**二次曲線**擬合
