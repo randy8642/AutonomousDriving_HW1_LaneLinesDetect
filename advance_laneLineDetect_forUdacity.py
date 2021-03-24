@@ -3,9 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # PARAM
-SRC_PATH = './data/solidWhiteRight.mp4'
+SRC_PATH = './data/challenge.mp4'
 OUT_PATH = './output.mp4'
-NUM = 200
 
 
 # get frame
@@ -20,160 +19,95 @@ out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(
 tmpout = cv2.VideoWriter('./tmp.mp4', cv2.VideoWriter_fourcc(
     *'mp4v'), 24, (height, width))
 
-
-for n in range(NUM):
+n = 0
+while True:
     n += 1
     if n % 20 == 0:
-        print(f'{n}/{NUM}', end='\r')
+        print(f'{n}/???', end='\r')
 
-    # Capture frame-by-frame
     ret, frame = cap.read()
 
+    if frame is None:
+        break
+    
     img = frame
 
     # --------------------------------------------------------------------------------------------- #
 
-    # Transform image to gray scale
-    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray_img = cv2.cvtColor(img,cv2.cv2.COLOR_BGR2HLS)[:,:,2]
 
-    # Apply sobel (derivative) in x direction, this is usefull to detect lines that tend to be vertical
+    # 套用 Sobel x 和 Sobel y
     sobelx = cv2.Sobel(gray_img, cv2.CV_64F, 1, 0)
     abs_sobelx = np.absolute(sobelx)
     sobely = cv2.Sobel(gray_img, cv2.CV_64F, 0, 1)
     abs_sobely = np.absolute(sobely)
 
-    # Scale result to 0-255
+    # 縮放置 0 - 255
     scaled_sobelx = np.uint8(255*abs_sobelx/np.max(abs_sobelx))
     sx_binary = np.zeros_like(scaled_sobelx)
     scaled_sobely = np.uint8(255*abs_sobely/np.max(abs_sobely))
     sy_binary = np.zeros_like(scaled_sobely)
 
-    # Keep only derivative values that are in the margin of interest
+    
+    # 選取範圍
     sx_binary[(scaled_sobelx >= 20) & (scaled_sobelx <= 130)] = 1
-    sy_binary[(scaled_sobely >= 100) & (scaled_sobely <= 150)] = 1
+    sy_binary[(scaled_sobely >= 50) & (scaled_sobely <= 150)] = 1
 
-    kernel = np.ones((3, 3), np.uint8)
+    # 邊緣膨脹
+    kernel = np.ones((4, 4), np.uint8)
     sx_binary = cv2.bitwise_not(
         cv2.erode(cv2.bitwise_not(sx_binary), kernel, iterations=2))
     sy_binary = cv2.bitwise_not(
         cv2.erode(cv2.bitwise_not(sy_binary), kernel, iterations=2))
 
-    # --------------------------------------------------------------------------------------------- #
-
-    # hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
-
-    # lower = np.uint8([ 20,   100, 20])
-    # upper = np.uint8([ 40, 190, 60])
-    # yellow_binary = cv2.inRange(hls, lower, upper)
-    # kernel = np.ones((3, 3), np.uint8)
-    # yellow_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(yellow_binary), kernel, iterations=1))
-
-    # lower = np.uint8([  20, 190,   5])
-    # upper = np.uint8([100, 225, 30])
-    # white_binary = cv2.inRange(hls, lower, upper)
-    # kernel = np.ones((3, 3), np.uint8)
-    # white_binary = cv2.bitwise_not(cv2.erode(cv2.bitwise_not(white_binary), kernel, iterations=2))
-
-    # img_combine = np.logical_or(yellow_binary, white_binary).astype(np.uint8)
-    # img_combine = np.logical_or(img_combine, sx_binary).astype(np.uint8)
     img_combine = np.logical_and(sx_binary, sy_binary).astype(np.uint8)
 
-    # fig,ax = plt.subplots(1,2)
-    # ax[0].imshow(scaled_sobelx)
-    # ax[1].imshow(np.logical_and(sx_binary,sy_binary))
-    # plt.show()
-    # print(n)
-    # cv2.imshow('',cv2.cvtColor(img_combine*255,cv2.COLOR_GRAY2BGR) )
-    # cv2.waitKey()
-    # continue
-
-    # --------------------------------------------------------------------------------------------- #
-    # MASK
-    # mask_ROI = np.zeros([height, width, 1], dtype=np.uint8)
-    # dots_ROI = np.array([(-680, 720), (445, 460), (950, 460), (2085, 720)])
-    # cv2.drawContours(mask_ROI, [dots_ROI], 0, 255, -1)
-    # mask_ROI = cv2.bitwise_not(mask_ROI)
-    # mask_LOGO = np.zeros([height, width, 1], dtype=np.uint8)
-    # dots_LOGO = np.array(
-    #     [(1040, 660), (1260, 660), (1260, 715), (1040, 715)])
-    # cv2.drawContours(mask_LOGO, [dots_LOGO], 0, 255, -1)
-    # mask = cv2.bitwise_or(mask_ROI, mask_LOGO)
-    # mask = cv2.bitwise_not(mask_ROI)
-
-    # img_combine = cv2.bitwise_or(img_combine, img_combine, mask=mask)
-
     # --------------------------------------------------------------------------------------------- #
 
-    # Source points taken from images with straight lane lines, these are to become parallel after the warp transform
     src = np.float32([
-        (60, 540),  # bottom-left corner
-        (430, 330),  # top-left corner
-        (530, 330),  # top-right corner
-        (900, 540)  # bottom-right corner
+        (100, 650),
+        (600, 440),
+        (730, 440),
+        (1230, 650)
     ])
-    # src = np.float32([
-    #     (-1000, 720),  # bottom-left corner
-    #     (405, 460),  # top-left corner
-    #     (830, 460),  # top-right corner
-    #     (2600, 720)  # bottom-right corner
-    # ])
 
-    # Destination points are to be parallel, taking into account the image size
     dst = np.float32([
-        [0, img.shape[1]],             # bottom-left corner
-        [0, 0],                       # top-left corner
-        [img.shape[0], 0],           # top-right corner
-        [img.shape[0], img.shape[1]]  # bottom-right corner
+        [0, img.shape[1]],
+        [0, 0],
+        [img.shape[0], 0],
+        [img.shape[0], img.shape[1]]
     ])
 
-    # Calculate the transformation matrix and it's inverse transformation
     M = cv2.getPerspectiveTransform(src, dst)
     M_inv = cv2.getPerspectiveTransform(dst, src)
     img_birdeye = cv2.warpPerspective(
         src=img_combine, M=M, dsize=(img.shape[0], img.shape[1]))
 
-    
-    # cv2.drawContours(img, [src.astype(np.int32)], 0, (0,255,0), 2)
-    # cv2.imshow('', img)
-    # cv2.waitKey()
-    # exit()
-    # cv2.imshow('', cv2.cvtColor(img_birdeye*255, cv2.COLOR_GRAY2BGR))
+    # cv2.drawContours(img,[src.astype(np.int32)],0,(0,255,0),2)
+    # cv2.imshow('',img)
     # cv2.waitKey()
     # exit()
 
-    # plt.imshow(img_birdeye)
-    # plt.axvline(256)
-    # plt.axvline(446)
-    # plt.axvline(79)
-    # plt.axvline(640)
-    # plt.show()
-    # if n% 10:
-    #     plt.plot(np.sum(img_birdeye,axis=0))
-    #     plt.show()
-    # continue
     # --------------------------------------------------------------------------------------------- #
 
     binary_warped = img_birdeye
 
     # 垂直方向疊加
     histogram = np.sum(binary_warped, axis=0)
-    # plt.clf()
-    # plt.plot(histogram)
-    # plt.draw()
-    # plt.pause(0.03)
 
     areaBoundary = \
         0, int(histogram.shape[0]//4 * 2), histogram.shape[0]
 
     laneBase = \
         [np.argmax(histogram[areaBoundary[0]:areaBoundary[1]]) + areaBoundary[0],
-         np.argmax(histogram[areaBoundary[1]:areaBoundary[2]]) + areaBoundary[1],]
+         np.argmax(histogram[areaBoundary[1]:areaBoundary[2]]) + areaBoundary[1], ]
 
     # ---------------------------------------------------------------------------------- #
 
     nwindows = 9
-    margin = 40
-    minpixel = 50
+    margin = 50
+    minpixel = 10
 
     window_height = np.int32(binary_warped.shape[0]//nwindows)
 
@@ -191,8 +125,8 @@ for n in range(NUM):
         for n_window in range(nwindows//2+1):
 
             x_range = laneCurrent - margin if laneCurrent - margin >= 0 else 0, laneCurrent + \
-                margin if laneCurrent + margin < binary_warped.shape[1] else binary_warped.shape[1] - 1
-            
+                margin if laneCurrent + \
+                margin < binary_warped.shape[1] else binary_warped.shape[1] - 1
 
             win_y_low = binary_warped.shape[0] - (n_window+1)*window_height
             win_y_high = binary_warped.shape[0] - n_window*window_height
@@ -213,8 +147,8 @@ for n in range(NUM):
         for n_window in range(nwindows//2):
 
             x_range = laneCurrent - margin if laneCurrent - margin >= 0 else 0, laneCurrent + \
-                margin if laneCurrent + margin < binary_warped.shape[1] else binary_warped.shape[1] - 1
-            
+                margin if laneCurrent + \
+                margin < binary_warped.shape[1] else binary_warped.shape[1] - 1
 
             win_y_low = n_window*window_height
             win_y_high = (n_window+1)*window_height
@@ -235,7 +169,7 @@ for n in range(NUM):
 
         #     tmpimg = cv2.circle(
         #         tmpimg, (x_point[xx], y_point[xx]), 1, (0, 255, 0), 1)
-        
+
         # cv2.imshow('', tmpimg)
         # cv2.waitKey()
         if len(y_point) > 0:
@@ -254,11 +188,11 @@ for n in range(NUM):
 
     for line_x in laneLine_x:
         # print(np.abs(line_x[-1]-line_x[0]))
-        if np.abs(line_x[-1]-line_x[0]) > 60:
+        if np.abs(line_x[-1]-line_x[0]) > 100:
             continue
-        if np.abs(line_x[-1] - line_x[len(line_x)//2]) > 60:
+        if np.abs(line_x[-1] - line_x[len(line_x)//2]) > 100:
             continue
-        if np.abs(line_x[0] - line_x[len(line_x)//2]) > 60:
+        if np.abs(line_x[0] - line_x[len(line_x)//2]) > 100:
             continue
 
         lineWindow1 = np.expand_dims(

@@ -9,6 +9,7 @@ NCKU Practices of Autonomous Driving course homework
 2. [國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube](https://www.youtube.com/watch?v=0crwED4yhBA)
 
 ## 成果
+**各影片做法相同但參數不同**
 1. Udacity Test Video - solidWhiteRight
 ![](/img/udacity_test_solidWhiteRight.gif)
 完整連結：[udacity_test_solidWhiteRight](/img/udacity_test_solidWhiteRight.mp4)
