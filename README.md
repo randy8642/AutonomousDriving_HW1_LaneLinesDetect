@@ -6,17 +6,27 @@ NCKU Practices of Autonomous Driving course homework
 
 ## 影片素材
 1. [Udacity Test Video - solidWhiteRight](https://github.com/udacity/CarND-LaneLines-P1/blob/master/test_videos/solidWhiteRight.mp4)
-2. [國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube](https://www.youtube.com/watch?v=0crwED4yhBA)
+2. [Udacity Test Video - solidYellowLeft](https://github.com/udacity/CarND-LaneLines-P1/blob/master/test_videos/solidYellowLeft.mp4)
+3. [Udacity Test Video - challenge](https://github.com/udacity/CarND-LaneLines-P1/blob/master/test_videos/challenge.mp4)
+4. [國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube](https://www.youtube.com/watch?v=0crwED4yhBA)
 
 ## 成果
 **各影片做法相同但參數不同**
 1. Udacity Test Video - solidWhiteRight
-![](/img/udacity_test_solidWhiteRight.gif)
-完整連結：[udacity_test_solidWhiteRight](/img/udacity_test_solidWhiteRight.mp4)
+完整連結：[solidWhiteRight_result](/output/solidWhiteRight_result.mp4)
+![](/img/solidWhiteRight_sample.gif)
 
-2. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube
-![](/img/sample.gif)
+2. Udacity Test Video - solidYellowLeft
+完整連結：[solidYellowLeft_result](/output/solidYellowLeft_result.mp4)
+![](/img/solidYellowLeft_sample.gif)
+
+3. Udacity Test Video - challenge
+完整連結：[challenge_result](/output/challenge_result.mp4)
+![](/img/solidWhiteRight_sample.gif)
+
+4. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube
 完整連結：[NCKU_AutonomousDriving_HW1_LaneLinesDetect - Youtube](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
+![](/img/Taiwan_freeway_sample.gif)
 
 
 
