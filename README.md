@@ -12,19 +12,19 @@ NCKU Practices of Autonomous Driving course homework
 
 ## 成果
 **各影片做法相同但參數不同**
-1. Udacity Test Video - solidWhiteRight
+1. Udacity Test Video - solidWhiteRight\
 完整連結：[solidWhiteRight_result](/output/solidWhiteRight_result.mp4)
 ![](/img/solidWhiteRight_sample.gif)
 
-2. Udacity Test Video - solidYellowLeft
+2. Udacity Test Video - solidYellowLeft\
 完整連結：[solidYellowLeft_result](/output/solidYellowLeft_result.mp4)
 ![](/img/solidYellowLeft_sample.gif)
 
-3. Udacity Test Video - challenge
+3. Udacity Test Video - challenge\
 完整連結：[challenge_result](/output/challenge_result.mp4)
-![](/img/solidWhiteRight_sample.gif)
+![](/img/challenge_sample.gif)
 
-4. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube
+4. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube\
 完整連結：[NCKU_AutonomousDriving_HW1_LaneLinesDetect - Youtube](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
 ![](/img/Taiwan_freeway_sample.gif)
 
