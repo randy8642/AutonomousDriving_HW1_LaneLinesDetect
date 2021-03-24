@@ -36,6 +36,19 @@ NCKU Practices of Autonomous Driving course homework
 [OanaGaskey / Advanced-Lane-Detection - github](https://github.com/OanaGaskey/Advanced-Lane-Detection)\
 [udacity / CarND-LaneLines-P1 - github](https://github.com/udacity/CarND-LaneLines-P1)
 
+### Step 0 讀取影片
+```python
+    '''
+    ## 可設定參數 ##
+    SRC_PATH    要處理的影片檔位置
+    '''
+    cap = cv2.VideoCapture(SRC_PATH)
+
+    # 取得影格(呼叫1次取1張)
+    ret, frame = cap.read()
+    img = frame
+```
+
 ### Step 1 特徵擷取
 1. 將圖片經過 Sobel x 和 Sobel y 轉換
 ```python
@@ -89,7 +102,8 @@ NCKU Practices of Autonomous Driving course homework
 * 將影像轉換為鳥瞰視角
 ```python
     '''
-    src 區域參數請自行調整
+    ## 可設定參數 ##
+    src     轉換區域
     '''
     # 原圖片轉換範圍
     src = np.float32([
@@ -154,10 +168,10 @@ NCKU Practices of Autonomous Driving course homework
 3. 透過前一區塊中的**非零像素平均**調整下一區塊左右位置以追蹤車道彎曲
 ```python
     '''
-    ##可設定參數##
-    nwindows        垂直方向切割區塊數    
-    margin          區塊由中心左右延伸的寬度
-    minpixel        是否儲存像素點的閥值(儲存的點會用於擬合曲線)
+    ## 可設定參數 ##
+    nwindows    垂直方向切割區塊數    
+    margin      區塊由中心左右延伸的寬度
+    minpixel    是否儲存像素點的閥值(儲存的點會用於擬合曲線)
     '''
     
     window_height = int(binary_warped.shape[0]//nwindows)
@@ -216,21 +230,24 @@ NCKU Practices of Autonomous Driving course homework
 2. 透過**彎曲程度**判斷擬合是否正確
 ```python
     '''
-    判斷參數請自行調整
+    ## 可設定參數 ##
+    threshold   可容許最大差距
     '''
+    threshold = 60
+
     # 影像上下兩點的水平距離
-    if np.abs(line_x[-1]-line_x[0]) > 60:
+    if np.abs(line_x[-1]-line_x[0]) > threshold:
         continue
     # 影像中間點與上下兩點的水平距離
-    if np.abs(line_x[-1] - line_x[len(line_x)//2]) > 60:
+    if np.abs(line_x[-1] - line_x[len(line_x)//2]) > threshold:
         continue
-    if np.abs(line_x[0] - line_x[len(line_x)//2]) > 60:
+    if np.abs(line_x[0] - line_x[len(line_x)//2]) > threshold:
         continue
 ```
 3. 繪製車道線
 ```python
     '''
-    可設定參數
+    ## 可設定參數 ##
     margin      繪製的車道線左右寬度
     '''
     
