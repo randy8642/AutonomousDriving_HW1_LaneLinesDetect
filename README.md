@@ -38,6 +38,15 @@ NCKU Practices of Autonomous Driving course homework
 
 ### Step 1 特徵擷取
 1. 將圖片經過 Sobel x 和 Sobel y 轉換
+
+```python
+    kernel = np.ones((3, 3), np.uint8)
+    sx_binary = cv2.bitwise_not(
+        cv2.erode(cv2.bitwise_not(sx_binary), kernel, iterations=2))
+    sy_binary = cv2.bitwise_not(
+        cv2.erode(cv2.bitwise_not(sy_binary), kernel, iterations=2))
+```
+
 ![](/img/sobel_result.png)
 2. 邊緣膨脹
 ![](/img/sobelERODE_result.png)
