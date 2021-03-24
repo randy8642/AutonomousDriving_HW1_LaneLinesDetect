@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # PARAM
 SRC_PATH = './data/video.mp4'
 OUT_PATH = './output.mp4'
-NUM = 480
+NUM = 240
 
 
 # get frame
@@ -35,7 +35,7 @@ for n in range(NUM):
 
     # Transform image to gray scale
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+   
     # Apply sobel (derivative) in x direction, this is usefull to detect lines that tend to be vertical
     sobelx = cv2.Sobel(gray_img, cv2.CV_64F, 1, 0)
     abs_sobelx = np.absolute(sobelx)
@@ -50,7 +50,7 @@ for n in range(NUM):
 
     # Keep only derivative values that are in the margin of interest
     sx_binary[(scaled_sobelx >= 20) & (scaled_sobelx <= 130)] = 1
-    sy_binary[(scaled_sobely >= 100) & (scaled_sobely <= 150)] = 1
+    sy_binary[(scaled_sobely >= 50) & (scaled_sobely <= 150)] = 1
 
     kernel = np.ones((3, 3), np.uint8)
     sx_binary = cv2.bitwise_not(

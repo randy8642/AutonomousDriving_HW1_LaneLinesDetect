@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # PARAM
-SRC_PATH = './data/challenge.mp4'
+SRC_PATH = './data/solidYellowLeft.mp4'
 OUT_PATH = './output.mp4'
 
 
@@ -35,7 +35,7 @@ while True:
     # --------------------------------------------------------------------------------------------- #
 
     # gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray_img = cv2.cvtColor(img,cv2.cv2.COLOR_BGR2HLS)[:,:,2]
+    gray_img = cv2.cvtColor(img,cv2.cv2.COLOR_BGR2GRAY)
 
     # 套用 Sobel x 和 Sobel y
     sobelx = cv2.Sobel(gray_img, cv2.CV_64F, 1, 0)
@@ -66,10 +66,10 @@ while True:
     # --------------------------------------------------------------------------------------------- #
 
     src = np.float32([
-        (100, 650),
-        (600, 440),
-        (730, 440),
-        (1230, 650)
+        (0, 540),
+        (420, 330),
+        (550, 330),
+        (960, 540)
     ])
 
     dst = np.float32([
