@@ -1,33 +1,35 @@
 # 自動駕駛實務 作業1 道路邊線檢測 AutonomousDriving_HW1_LaneLinesDetect
+
 NCKU Practices of Autonomous Driving course homework
 
 ## 目標
+
 車道邊線偵測
 
 ## 影片素材
+
 1. [Udacity Test Video - solidWhiteRight](https://github.com/udacity/CarND-LaneLines-P1/blob/master/test_videos/solidWhiteRight.mp4)
 2. [Udacity Test Video - solidYellowLeft](https://github.com/udacity/CarND-LaneLines-P1/blob/master/test_videos/solidYellowLeft.mp4)
 3. [Udacity Test Video - challenge](https://github.com/udacity/CarND-LaneLines-P1/blob/master/test_videos/challenge.mp4)
 4. [國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube](https://www.youtube.com/watch?v=0crwED4yhBA)
 
 ## 成果
+
 **各影片做法相同但參數不同**
-1. Udacity Test Video - solidWhiteRight\
-完整連結：[solidWhiteRight_result](/output/solidWhiteRight_result.mp4)
-![](/img/solidWhiteRight_sample.gif)
 
-2. Udacity Test Video - solidYellowLeft\
-完整連結：[solidYellowLeft_result](/output/solidYellowLeft_result.mp4)
+1. Udacity Test Video - solidWhiteRight
+完整影片：[solidWhiteRight_result](/output/solidWhiteRight_result.mp4)
+![solidWhiteRight_sample](/img/solidWhiteRight_sample.gif)
+
+2. Udacity Test Video - solidYellowLeft
+完整影片：[solidYellowLeft_result](/output/solidYellowLeft_result.mp4)
 ![](/img/solidYellowLeft_sample.gif)
-
-3. Udacity Test Video - challenge\
-完整連結：[challenge_result](/output/challenge_result.mp4)
+3. Udacity Test Video - challenge
+完整影片：[challenge_result](/output/challenge_result.mp4)
 ![](/img/challenge_sample.gif)
-
-4. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube\
-完整連結：[NCKU_AutonomousDriving_HW1_LaneLinesDetect - Youtube](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
+4. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube
+完整影片：[NCKU_AutonomousDriving_HW1_LaneLinesDetect - Youtube](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
 ![](/img/Taiwan_freeway_sample.gif)
-
 
 
 ## 作法
@@ -37,6 +39,7 @@ NCKU Practices of Autonomous Driving course homework
 [udacity / CarND-LaneLines-P1 - github](https://github.com/udacity/CarND-LaneLines-P1)
 
 ### Step 0 讀取影片
+
 ```python
     '''
     ## 可設定參數 ##
@@ -50,6 +53,7 @@ NCKU Practices of Autonomous Driving course homework
 ```
 
 ### Step 1 特徵擷取
+
 1. 將圖片經過 Sobel x 和 Sobel y 轉換
 ```python
     # 將圖片轉換為灰階
@@ -73,6 +77,7 @@ NCKU Practices of Autonomous Driving course homework
 ```
 
 ![](/img/sobel_result.png)
+
 2. 邊緣侵蝕
 ```python
     # 設定 kernal size
@@ -91,7 +96,9 @@ NCKU Practices of Autonomous Driving course homework
     sy_binary = cv2.bitwise_not(sy_binary)
 ```
 ![](/img/sobelERODE_result.png)
+
 3. 進行 AND 運算
+
 ```python
     img_combine = np.logical_and(sx_binary, sy_binary).astype(np.uint8)
 ```
