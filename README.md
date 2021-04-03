@@ -285,7 +285,4 @@ NCKU Practices of Autonomous Driving course homework
 ```
 ![](/img/laneDetect_ori_result.jpg)
 
-## 心得
->車道偵測最困難的地方是特徵擷取部分，
->需要套用和嘗試各種邊緣擷取及色彩的閥值，
->才能得到將車道特徵最大化的圖
+
