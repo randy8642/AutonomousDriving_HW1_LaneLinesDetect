@@ -28,7 +28,6 @@ NCKU Practices of Autonomous Driving course homework
 完整影片：[challenge_result](/output/challenge_result.mp4)
 ![](/img/challenge_sample.gif)
 4. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube
-完整影片：[NCKU_AutonomousDriving_HW1_LaneLinesDetect - Youtube](https://www.youtube.com/watch?v=5E8ZZ89CN6o)
 ![](/img/Taiwan_freeway_sample.gif)
 
 
