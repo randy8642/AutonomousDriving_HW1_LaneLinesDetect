@@ -18,16 +18,16 @@ NCKU Practices of Autonomous Driving course homework
 **各影片做法相同但參數不同**
 
 1. Udacity Test Video - solidWhiteRight
-完整影片：[solidWhiteRight_result](/output/solidWhiteRight_result.mp4)
-![solidWhiteRight_sample](/img/solidWhiteRight_sample.gif)
-2. Udacity Test Video - solidYellowLeft
-完整影片：[solidYellowLeft_result](/output/solidYellowLeft_result.mp4)
-![](/img/solidYellowLeft_sample.gif)
-3. Udacity Test Video - challenge
-完整影片：[challenge_result](/output/challenge_result.mp4)
-![](/img/challenge_sample.gif)
-4. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube
-![](/img/Taiwan_freeway_sample.gif)
+完整影片：[solidWhiteRight_result](/output/solidWhiteRight.mp4)
+![solidWhiteRight_sample](/img/gif/solidWhiteRight.gif)
+1. Udacity Test Video - solidYellowLeft
+完整影片：[solidYellowLeft_result](/output/solidYellowLeft.mp4)
+![](/img/gif/solidYellowLeft.gif)
+1. Udacity Test Video - challenge
+完整影片：[challenge_result](/output/challenge.mp4)
+![](/img/gif/challenge.gif)
+1. 國道一號 中山高速公路 北向 高雄-基隆 374K-0K 全程 路程景National Highway No. 1 - Youtube
+![](/img/gif/freeway.gif)
 
 
 ## 作法

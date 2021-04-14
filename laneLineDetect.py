@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 # PARAM
 SRC_PATH = './data/challenge.mp4'
 OUT_PATH = './challenge.mp4'
-NUM = 1000
 
 # get frame
 cap = cv2.VideoCapture(SRC_PATH)
@@ -19,24 +18,26 @@ out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(
 LeftLane = []
 RightLane = []
 
-
-for n in range(NUM):
+n = 0
+while True:
     n += 1
     if n % 20 == 0:
-        print(f'{n}/{NUM}')
-
+        print(f'{n}')
+    
     # Capture frame-by-frame
     ret, frame = cap.read()
 
     if not ret:
         break
+    if not n%3:
+        continue
 
     img = frame
-
+    
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = cv2.GaussianBlur(img, (9, 9), 0.1)
     img = cv2.Canny(img, 100, 200)
-
+    
     # MASK
     mask_ROI = np.zeros([height, width, 1], dtype=np.uint8)
     dots_ROI = np.array([(0, 700), (500, 530), (780, 530), (1280, 700)])
@@ -48,9 +49,12 @@ for n in range(NUM):
     cv2.drawContours(mask_LOGO, [dots_LOGO], 0, 255, -1)
     mask = cv2.bitwise_or(mask_ROI, mask_LOGO)
     mask = cv2.bitwise_not(mask)
+    
 
     # APPLY MASK
     img = cv2.bitwise_and(img, mask)
+
+   
 
     # Detect line
     LeftUpdate = False
@@ -75,17 +79,18 @@ for n in range(NUM):
             pt1_new = (int((720 - b) // m), 720)
             pt2_new = (int((460 - b) // m), 460)
 
-            if m < 0.4 and m > -0.2:
+            
+            if m < 0.45 and m > -0.5:
                 continue
-
+            
             if m < 0:
                 if not LeftUpdate:
                     LeftLane = [pt1_new, pt2_new]
-                    LeftUpdate = True
+                    LeftUpdate = True                    
                     continue
                 if pt1_new[0] > LeftLane[0][0]:
                     LeftLane = [pt1_new, pt2_new]
-
+                
             elif m > 0:
                 if not RightUpdate:
                     RightLane = [pt1_new, pt2_new]
@@ -93,7 +98,7 @@ for n in range(NUM):
                     continue
                 if pt1_new[0] < RightLane[0][0]:
                     RightLane = [pt1_new, pt2_new]
-
+                
     # DRAW LINE
     weight_img = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
     if len(LeftLane) > 0:
