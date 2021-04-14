@@ -60,7 +60,7 @@ NCKU Practices of Autonomous Driving course homework
    img = cv2.GaussianBlur(img, (9, 9), 0.1)
    ```
    ![Blur](/img/GaussianBlur.jpg)
-3. 使用 Canny 邊緣偵測 來尋找車道線
+3. 使用 Canny 邊緣偵測
    ```python
    img = cv2.Canny(img, 100, 200)
    ```
