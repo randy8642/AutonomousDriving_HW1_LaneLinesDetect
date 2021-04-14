@@ -3,17 +3,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # PARAM
-SRC_PATH = './data/video.mp4'
-OUT_PATH = './output.mp4'
-NUM = 480
+SRC_PATH = './data/challenge.mp4'
+OUT_PATH = './challenge.mp4'
+NUM = 1000
 
 # get frame
 cap = cv2.VideoCapture(SRC_PATH)
 
-width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  
-height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) 
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(*'mp4v'), 24, (width, height))
+out = cv2.VideoWriter(OUT_PATH, cv2.VideoWriter_fourcc(
+    *'mp4v'), 24, (width, height))
 
 LeftLane = []
 RightLane = []
@@ -21,22 +22,21 @@ RightLane = []
 
 for n in range(NUM):
     n += 1
-    if n%20==0:
+    if n % 20 == 0:
         print(f'{n}/{NUM}')
-
 
     # Capture frame-by-frame
     ret, frame = cap.read()
-    if n%3!=0:
-        continue
+
+    if not ret:
+        break
 
     img = frame
-    
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # img = cv2.GaussianBlur(img, (9, 9), 0.1)
+    img = cv2.GaussianBlur(img, (9, 9), 0.1)
     img = cv2.Canny(img, 100, 200)
-    
+
     # MASK
     mask_ROI = np.zeros([height, width, 1], dtype=np.uint8)
     dots_ROI = np.array([(0, 700), (500, 530), (780, 530), (1280, 700)])
@@ -69,7 +69,7 @@ for n in range(NUM):
             pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
 
             # y = ma + b
-           
+
             m = (pt2[1]-pt1[1])/(pt2[0]-pt1[0])
             b = pt1[1] - (pt1[0] * m)
             pt1_new = (int((720 - b) // m), 720)
@@ -85,7 +85,6 @@ for n in range(NUM):
                     continue
                 if pt1_new[0] > LeftLane[0][0]:
                     LeftLane = [pt1_new, pt2_new]
-               
 
             elif m > 0:
                 if not RightUpdate:
@@ -94,17 +93,19 @@ for n in range(NUM):
                     continue
                 if pt1_new[0] < RightLane[0][0]:
                     RightLane = [pt1_new, pt2_new]
-                
 
     # DRAW LINE
-    outframe = frame
+    weight_img = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
     if len(LeftLane) > 0:
-        cv2.line(outframe, LeftLane[0], LeftLane[1], (0, 0, 255), 2, cv2.LINE_AA)
+        cv2.line(weight_img, LeftLane[0], LeftLane[1],
+                 (0, 0, 255), 8, cv2.LINE_AA)
     if len(RightLane) > 0:
-        cv2.line(outframe, RightLane[0], RightLane[1], (255, 0, 0), 2, cv2.LINE_AA)
+        cv2.line(weight_img, RightLane[0],
+                 RightLane[1], (0, 0, 255), 8, cv2.LINE_AA)
 
-
+   
+    # ADD WEIGHT
+    outframe = cv2.addWeighted(frame, 1, weight_img, 0.5, 0)
+   
     # OUTPUT
     out.write(outframe)
-    
-   
